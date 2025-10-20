@@ -39,8 +39,16 @@ def updateBall(ball):
     ballSpeed = ball[2]
 
     for _ in range(ballSpeed):
+        BOUNCE_ANGLE = math.pi + math.pi/4
+        if ballX < 0:
+            ballDir += BOUNCE_ANGLE
+        if ballY < 0:
+            ballDir += BOUNCE_ANGLE
+        if ballX > 30:
+            ballDir += BOUNCE_ANGLE
+        if ballY > 10:
+            ballDir += BOUNCE_ANGLE
         if [round(ballX), round(ballY)] in players:
-            BOUNCE_ANGLE = math.pi + math.pi/4
             ballDir += BOUNCE_ANGLE
             print("oj")
 
