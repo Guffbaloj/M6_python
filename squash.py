@@ -14,8 +14,7 @@ def background_input():
         global input_char
         input_char = input("")
 
-background_input_thread = threading.Thread(target=background_input)
-background_input_thread.start()
+
 
 
 
@@ -25,7 +24,7 @@ def drawScreen(positionsList, ballPos):
     for y in range(10):
         row = ""
         for x in range(30):
-            if [x,y] == [int(ballPos[0]), int(ballPos[1])]:
+            if [x,y] == [round(ballPos[0]), round(ballPos[1])]:
                 row += "o"
             elif [x,y] in positionsList:
                 row += "I"
@@ -40,16 +39,20 @@ def updateBall(ball):
     ballSpeed = ball[2]
 
     for _ in range(ballSpeed):
-        if [int(ballX), int(ballY)] in players:
-            ballDir += math.pi
+        if [round(ballX), round(ballY)] in players:
+            BOUNCE_ANGLE = math.pi + math.pi/4
+            ballDir += BOUNCE_ANGLE
             print("oj")
 
         ballX += math.cos(ballDir)
         ballY += math.sin(ballDir)
-        print(int(ballX), int(ballY))
-    ball[0] = [round(ballX), round(ballY)]
+    ball[0] = [ballX, ballY]
     ball[1] = ballDir
+    print(ball)
 
+
+background_input_thread = threading.Thread(target=background_input)
+background_input_thread.start()
 
 while True:
     drawScreen(players,ball[0])
