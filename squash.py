@@ -6,7 +6,7 @@ from ball import Ball
 pygame.init()
 
 WIDTH = 480
-HEIGHT = 360
+HEIGHT = 860
 FPS = 60
 
 window = pygame.display.set_mode((WIDTH,HEIGHT))
@@ -16,7 +16,7 @@ playerNr = 0
 players = [Player((50,240),(70,20),(32,132,32)), 
            Player((310,240),(70,20),(132,32,32))]
 currentPlayer = players[playerNr]
-ball = Ball((200,200),40,(WIDTH,HEIGHT),players)
+ball = Ball((200,200),4,(WIDTH,HEIGHT),players)
 
 def renderPlayers(display):
     for player in players:
