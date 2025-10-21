@@ -1,50 +1,23 @@
-import sys
-import threading
-import math
-import time
+import pygame
 
-from ball import Ball
+from player import Player
 
-input_char = None
+pygame.init()
 
-WIDTH = 50
-HEIGHT = 30
+WIDTH = 480
+HEIGHT = 360
+FPS = 60
 
-players = [[0,14],[59,14]]
-ball = Ball([30,14],1,players,(WIDTH,HEIGHT))
+window = pygame.display.set_mode((WIDTH,HEIGHT))
+clock = pygame.time.Clock()
 
-def background_input():
-    while True:
-        global input_char
-        input_char = input("")
-
-
-
-
-
-def drawScreen(positionsList, ballPos):
-    print(f"\n"*10)
-    print(input_char)
-    for y in range(WIDTH):
-        row = ""
-        for x in range(HEIGHT):
-            if [x,y] == [round(ballPos[0]), round(ballPos[1])]:
-                row += "o"
-            elif [x,y] in positionsList:
-                row += "I"
-            else:
-                row += " "
-        print(row)
-    print(ballPos)
-
-
-
-
-background_input_thread = threading.Thread(target=background_input)
-background_input_thread.start()
-
+player1 = Player((50,240),(20,70),(32,32,32))
 while True:
-    drawScreen(players,ball.pos)
-    ball.update()
-    time.sleep(0.1)
+    window.fill((255,255,255))
 
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+    player1.render(window)
+    pygame.display.update()
+    clock.tick(FPS)
