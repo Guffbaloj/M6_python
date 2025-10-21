@@ -3,11 +3,15 @@ import threading
 import math
 import time
 
+from ball import Ball
+
 input_char = None
 
+WIDTH = 50
+HEIGHT = 30
 
-players = [[0,4],[29,4]]
-ball = [[15,4],math.pi,2]
+players = [[0,14],[59,14]]
+ball = Ball([30,14],1,players,(WIDTH,HEIGHT))
 
 def background_input():
     while True:
@@ -21,9 +25,9 @@ def background_input():
 def drawScreen(positionsList, ballPos):
     print(f"\n"*10)
     print(input_char)
-    for y in range(10):
+    for y in range(WIDTH):
         row = ""
-        for x in range(30):
+        for x in range(HEIGHT):
             if [x,y] == [round(ballPos[0]), round(ballPos[1])]:
                 row += "o"
             elif [x,y] in positionsList:
@@ -33,37 +37,14 @@ def drawScreen(positionsList, ballPos):
         print(row)
     print(ballPos)
 
-def updateBall(ball):
-    ballX, ballY = ball[0] 
-    ballDir = ball[1]
-    ballSpeed = ball[2]
 
-    for _ in range(ballSpeed):
-        BOUNCE_ANGLE = math.pi + math.pi/4
-        if ballX < 0:
-            ballDir += BOUNCE_ANGLE
-        if ballY < 0:
-            ballDir += BOUNCE_ANGLE
-        if ballX > 30:
-            ballDir += BOUNCE_ANGLE
-        if ballY > 10:
-            ballDir += BOUNCE_ANGLE
-        if [round(ballX), round(ballY)] in players:
-            ballDir += BOUNCE_ANGLE
-            print("oj")
-
-        ballX += math.cos(ballDir)
-        ballY += math.sin(ballDir)
-    ball[0] = [ballX, ballY]
-    ball[1] = ballDir
-    print(ball)
 
 
 background_input_thread = threading.Thread(target=background_input)
 background_input_thread.start()
 
 while True:
-    drawScreen(players,ball[0])
-    updateBall(ball)
-    time.sleep(1)
+    drawScreen(players,ball.pos)
+    ball.update()
+    time.sleep(0.1)
 
