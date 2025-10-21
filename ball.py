@@ -1,33 +1,41 @@
 import math
+import pygame
 class Ball:
-    def __init__(self, pos:list, speed:int, players:list, sceneSize:tuple):
-        self.dir = math.pi
-        self.pos = pos
+    def __init__(self, pos:tuple, speed, displaySize, players:list):
+        self.pos = pygame.math.Vector2(pos)
+        self.velocity = pygame.math.Vector2(speed,4)
         self.speed = speed
+        self.color = (233,233,88)
+        self.displaySize = displaySize
         self.players = players
-        self.sceneWidth = sceneSize[0]
-        self.sceneHeight = sceneSize[1]
-    
-    def update(self):
-        ballX, ballY = self.pos
-        for _ in range(self.speed):
-            BOUNCE_ANGLE1 = math.pi + math.pi/8
-            BOUNCE_ANGLE2 = math.pi/4
-            if ballX < 0:
-                self.dir += BOUNCE_ANGLE1
-            if ballY < 0:
-                self.dir += BOUNCE_ANGLE2
-            if ballX >= self.sceneWidth:
-                self.dir += BOUNCE_ANGLE1
-                ballX = self.sceneWidth
-            if ballY >= self.sceneHeight:
-                self.dir += BOUNCE_ANGLE2
-                ballY = self.sceneHeight
-            if [round(ballX), round(ballY)] in self.players:
-                self.dir += BOUNCE_ANGLE1
+    def setPosition(self, newPos:tuple):
+        self.pos = pygame.math.Vector2(newPos)
+    def hasCollided(self):
+        for player in self.players:
+            if player.getRect().collidepoint(self.pos):
+                return True
+        #sedan lite väggkollition och sånt
+        return False
+            
 
-            ballX += math.cos(self.dir)
-            ballY += math.sin(self.dir)
-        self.pos = [ballX, ballY]
-        self.dir = self.dir
-        print(self.pos)
+    def move(self, steps):
+        xstep = self.velocity.x/steps
+        ystep = self.velocity.x/steps
+        
+        for _ in range(steps):
+            self.pos.x + xstep
+            if self.hasCollided():
+                self.velocity.x *= -1
+                
+        for _ in range(steps):
+            self.pos.y + ystep
+            if self.hasCollided():
+                self.velocity.y *= -1
+                
+
+    def render(self, display):
+        pygame.draw.circle(display, self.color,self.pos,4)
+       
+    def update(self):
+        self.move(self.speed)
+    
