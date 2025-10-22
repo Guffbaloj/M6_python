@@ -5,8 +5,8 @@ from ball import Ball
 
 pygame.init()
 
-WIDTH = 480
-HEIGHT = 860
+WIDTH = 640
+HEIGHT = 240
 FPS = 60
 
 window = pygame.display.set_mode((WIDTH,HEIGHT))
