@@ -5,17 +5,20 @@ class Player:
         self.pos = pygame.math.Vector2(pos)
         self.size = pygame.math.Vector2(size)
         self.color = color
-        self.speed = 2
-    
+        self.speed = 5
+        self.movement = {"left":False, "right":False}
+
+        self.score = 0
     def getRect(self):
-        rect = pygame.rect.Rect(0,0,self.size[0], self.size[1])
+        rect = pygame.rect.Rect(0,0,self.size.x, self.size.y)
         rect.center = self.pos
         return rect
     
-    def move(self, upp, down):
-        self.pos[0] += (down - upp) * self.speed
+    def setPosition(self, newPos:tuple):
+        self.pos = pygame.math.Vector2(newPos)
+
     def update(self):
-        ...
+        self.pos.x += (self.movement["left"] - self.movement["right"])*self.speed
     
     def render(self, display):
         pygame.draw.rect(display, self.color, self.getRect())
