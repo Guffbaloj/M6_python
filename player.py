@@ -5,9 +5,10 @@ class Player:
         self.pos = pygame.math.Vector2(pos)
         self.size = pygame.math.Vector2(size)
         self.color = color
-        self.speed = 2
+        self.speed = 5
         self.movement = {"left":False, "right":False}
-    
+
+        self.score = 0
     def getRect(self):
         rect = pygame.rect.Rect(0,0,self.size.x, self.size.y)
         rect.center = self.pos
