@@ -13,18 +13,21 @@ window = pygame.display.set_mode((WIDTH,HEIGHT))
 clock = pygame.time.Clock()
 
 playerNr = 0
-players = [Player((50,HEIGHT-50),(70,20),(32,132,32)), 
-           Player((310,HEIGHT-50),(70,20),(132,32,32))]
+players = [Player((50,HEIGHT-50),(70,20),(32,182,132)), 
+           Player((310,HEIGHT-50),(70,20),(182,32,132))]
 currentPlayer = players[playerNr]
-ball = Ball((200,200),4,(WIDTH,HEIGHT),players,activePlayer=0)
+ball = Ball((200,200),(WIDTH,HEIGHT),players)
 scoreArea = pygame.rect.Rect(0,HEIGHT-20,WIDTH,20)
 
-def renderPlayers(display):
+def renderScene(display):
+    pygame.draw.rect(window,(233,12,12),scoreArea)
     for player in players:
         player.render(display)
-def updatePlayers():
+    ball.render(display)
+def updateEnts():
     for player in players:
         player.update()
+    ball.update()
 def handleKeypress(key,keydown):
     if key == pygame.K_a:
         currentPlayer.movement["right"] = keydown
@@ -37,25 +40,26 @@ def checkIfScored():
         players[ball.activePlayer].score += 1
         print(f"Wow, player {2 - ball.activePlayer} scored!")
         print(f"current score: {players[0].score} | {players[1].score}")
-        
-ball.setVelocity((0,-3))
-while True:
-    window.fill((255,255,255))
+def manageEvents():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                global currentPlayer
+                global playerNr
+                playerNr = (playerNr + 1)%2
+                currentPlayer = players[playerNr]
             handleKeypress(event.key, True)
         if event.type == pygame.KEYUP:
             handleKeypress(event.key, False)
 
-    updatePlayers()
-    ball.update()
-    
+ball.setVelocity((-1,-3))
+while True:
+    window.fill((255,255,255))
+    manageEvents()
+    updateEnts()
     checkIfScored()
-    
-    renderPlayers(window)
-    ball.render(window)
-    pygame.draw.rect(window,(233,12,12),scoreArea)
+    renderScene(window)
     pygame.display.update()
     clock.tick(FPS)
