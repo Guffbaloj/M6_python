@@ -1,5 +1,7 @@
 import math
 import pygame
+import server
+
 class Ball:
     def __init__(self, pos:tuple, displaySize, players:list):
         self.pos = pygame.math.Vector2(pos)
@@ -48,3 +50,4 @@ class Ball:
 
     def update(self):
         self.move(self.speed)
+        server.send_message(server.connection, server.BallMoveMessage(self.pos.x, self.pos.y))

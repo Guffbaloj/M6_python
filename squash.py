@@ -1,4 +1,6 @@
 import pygame
+import server
+import time
 
 from player import Player
 from ball import Ball
@@ -9,13 +11,14 @@ WIDTH = 640
 HEIGHT = 460
 FPS = 60
 
+amITheServer = False
+
 window = pygame.display.set_mode((WIDTH,HEIGHT))
 clock = pygame.time.Clock()
 
-playerNr = 0
-players = [Player((50,HEIGHT-50),(70,20),(32,182,132)), 
-           Player((310,HEIGHT-50),(70,20),(182,32,132))]
-currentPlayer = players[playerNr]
+players = [Player((50,HEIGHT-50),(70,20),(32,182,132), True),
+           Player((310,HEIGHT-50),(70,20),(182,32,132), False)]
+localPlayer = players[0]
 ball = Ball((200,200),(WIDTH,HEIGHT),players)
 scoreArea = pygame.rect.Rect(0,HEIGHT-20,WIDTH,20)
 
@@ -24,15 +27,16 @@ def renderScene(display):
     for player in players:
         player.render(display)
     ball.render(display)
-def updateEnts():
+def updateEntities():
     for player in players:
         player.update()
-    ball.update()
+    if amITheServer:
+        ball.update()
 def handleKeypress(key,keydown):
     if key == pygame.K_a:
-        currentPlayer.movement["right"] = keydown
+        localPlayer.movement["right"] = keydown
     if key == pygame.K_d:
-        currentPlayer.movement["left"] = keydown
+        localPlayer.movement["left"] = keydown
 def checkIfScored():
     if scoreArea.collidepoint(ball.pos):
         ball.setPosition((WIDTH/2,HEIGHT/2))
@@ -45,21 +49,48 @@ def manageEvents():
         if event.type == pygame.QUIT:
             pygame.quit()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                global currentPlayer
-                global playerNr
-                playerNr = (playerNr + 1)%2
-                currentPlayer = players[playerNr]
             handleKeypress(event.key, True)
         if event.type == pygame.KEYUP:
             handleKeypress(event.key, False)
+
+playerJoinedYet = False
+def netMessageHandler(msg):
+    if msg.get_type() == server.MESSAGE_PLAYER_JOIN:
+        global playerJoinedYet
+        if not amITheServer:
+            print("?????? En tredje spelare gick med ??????")
+        playerJoinedYet = True
+    elif msg.get_type() == server.MESSAGE_PLAYER_MOVE:
+        players[1].setPosition((msg.x, msg.y))
+    elif msg.get_type() == server.MESSAGE_BALL_MOVE:
+        ball.setPosition((msg.x, msg.y))
+
+i = input("Vill du starta klient eller server? ")
+if i[0].lower() == 'k':
+    pygame.display.set_caption("Squash - Klient")
+    host = input("Vem vill du ansluta till (till exempel 100.74.124.97)? ")
+    server.start_client(host, netMessageHandler)
+    while server.connection == None:
+        time.sleep(0.1)
+elif i[0].lower() == 's':
+    pygame.display.set_caption("Squash - Server")
+    amITheServer = True
+    server.start_server(netMessageHandler)
+    print("Väntar på att en spelare ska gå med...")
+    while not playerJoinedYet:
+        time.sleep(0.5)
+    print("En spelare gick med! Spela på!")
+else:
+    print("Kom tillbaka när du har bestämt dig för att vara antingen klient eller server!")
+    exit()
 
 ball.setVelocity((-1,-3))
 while True:
     window.fill((255,255,255))
     manageEvents()
-    updateEnts()
-    checkIfScored()
+    updateEntities()
+    if amITheServer:
+        checkIfScored()
     renderScene(window)
     pygame.display.update()
     clock.tick(FPS)
