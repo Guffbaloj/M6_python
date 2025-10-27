@@ -22,6 +22,7 @@ class Ball:
         player = self.players[self.activePlayer]
         if player.getRect().collidepoint(self.pos):
             self.activePlayer = (self.activePlayer + 1 )% 2
+            server.send_message(server.connection, server.BallActivePlayerMessage(self.activePlayer))
             return True
         if self.pos.x < 0 or self.pos.x > self.displaySize[0]:
             return True

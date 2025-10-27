@@ -8,6 +8,7 @@ MESSAGE_NONE = 0
 MESSAGE_PLAYER_JOIN = 1
 MESSAGE_PLAYER_MOVE = 2
 MESSAGE_BALL_MOVE = 3
+MESSAGE_BALL_ACTIVE_PLAYER = 4
 
 class Message:
     def apply():
@@ -39,6 +40,14 @@ class BallMoveMessage(Message):
     def get_type(sef): return MESSAGE_BALL_MOVE
     def get_bytes(self):
         return struct.pack(MOVE_MESSAGE_STRUCT, int(self.x), int(self.y))
+
+BALL_ACTIVE_PLAYER_STRUCT = "<i"
+class BallActivePlayerMessage(Message):
+    def __init__(self, player):
+        self.player = player
+    def get_type(self): return MESSAGE_BALL_ACTIVE_PLAYER
+    def get_bytes(self):
+        return struct.pack(BALL_ACTIVE_PLAYER_STRUCT, self.player)
 
 # Tuppel av (antal bytes, meddelandetyp)
 MESSAGE_HEADER_STRUCT = ">hh"
@@ -74,6 +83,9 @@ def read_message(sock: socket.socket):
     if message_type == MESSAGE_BALL_MOVE:
         x, y = struct.unpack(MOVE_MESSAGE_STRUCT, data)
         return BallMoveMessage(x, y)
+    if message_type == MESSAGE_BALL_ACTIVE_PLAYER:
+        player, = struct.unpack(BALL_ACTIVE_PLAYER_STRUCT, data)
+        return BallActivePlayerMessage(player)
 
 LISTEN_PORT = 1050
 

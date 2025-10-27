@@ -24,8 +24,8 @@ scoreArea = pygame.rect.Rect(0,HEIGHT-20,WIDTH,20)
 
 def renderScene(display):
     pygame.draw.rect(window,(233,12,12),scoreArea)
-    for player in players:
-        player.render(display)
+    for i in range(len(players)):
+        players[i].render(display, i == ball.activePlayer)
     ball.render(display)
 def updateEntities():
     for player in players:
@@ -64,6 +64,9 @@ def netMessageHandler(msg):
         players[1].setPosition((msg.x, msg.y))
     elif msg.get_type() == server.MESSAGE_BALL_MOVE:
         ball.setPosition((msg.x, msg.y))
+    elif msg.get_type() == server.MESSAGE_BALL_ACTIVE_PLAYER:
+        # player ids är olika på server och klient
+        ball.activePlayer = 1 - msg.player
 
 i = input("Vill du starta klient eller server? ")
 if i[0].lower() == 'k':
