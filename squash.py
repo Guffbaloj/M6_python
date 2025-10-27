@@ -48,6 +48,8 @@ def manageEvents():
             if event.key == pygame.K_SPACE:
                 global currentPlayer
                 global playerNr
+                currentPlayer.movement["left"] = False
+                currentPlayer.movement["right"] = False
                 playerNr = (playerNr + 1)%2
                 currentPlayer = players[playerNr]
             handleKeypress(event.key, True)
