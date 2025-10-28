@@ -25,7 +25,8 @@ scoreArea = pygame.rect.Rect(0,HEIGHT-20,WIDTH,20)
 def renderScene(display):
     pygame.draw.rect(window,(233,12,12),scoreArea)
     for i in range(len(players)):
-        players[i].render(display, i == ball.activePlayer)
+        # i omvänd ordning eftersom vi vill rita spelare 0 *överst*
+        players[1-i].render(display, 1-i == ball.activePlayer)
     ball.render(display)
 def updateEntities():
     for player in players:
