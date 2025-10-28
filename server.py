@@ -75,6 +75,9 @@ def read_message(sock: socket.socket):
     data = b''
     if size != 0:
         data = sock.recv(size)
+        if len(data) != size:
+            print("Någonting konstigt med nätverket!")
+            print(f"Fick {len(data)} bytes, men lovades {size} bytes!")
     if message_type == MESSAGE_PLAYER_JOIN:
         return PlayerJoinMessage()
     if message_type == MESSAGE_PLAYER_MOVE:
